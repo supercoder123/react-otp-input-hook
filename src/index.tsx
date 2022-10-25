@@ -2,8 +2,9 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { ReactOtpInput } from './hooks/ReactOtpInput';
 
 import { createRoot } from 'react-dom/client';
-import useInputSync from './hooks/useInputSync';
+import useInputSync from '../lib/useInputSync';
 import OTPInput from './components/OTPInput';
+import Form from '../demos/Form';
 
 export const App = () => {
   // const {register, clear, setDisabled, onChange, val} = useInputSync({});
@@ -29,12 +30,13 @@ export const App = () => {
         clear();
         console.log(e, formData.values())
       }}> */}
-        <OTPInput maxLength={4} onChangeHandler={memoizedCallback} />
-        {/* <OTPInput maxLength={4}  /> */}
+        <OTPInput maxLength={10} onChangeHandler={memoizedCallback} />
 
         {/* {otp} */}
       {/* </form> */}
       {/* <ReactOtpInput /> */}
+
+      {/* <Form /> */}
     </div>
   )
 }
