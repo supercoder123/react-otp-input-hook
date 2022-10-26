@@ -1,4 +1,4 @@
- 
+ # React otp input hook
 
 ```
 const otp = () => {
@@ -44,3 +44,5 @@ const otp = () => {
 12. usage with chakra ui [X]
 13. usage with material ui [X]
 14. usage with react-hook-form [X]
+15. usage with styled components
+16. TESTS !!!!!
