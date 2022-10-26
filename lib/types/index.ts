@@ -3,14 +3,12 @@ import { CSSProperties } from "react";
 export interface InputOptions {
     required?: boolean;
     maxLength?: number;
-    cyclable?: boolean;
-    type?: 'number' | 'text' | 'alphanumeric'
 }
 
 export type InputFieldType = HTMLTextAreaElement & HTMLInputElement;
 
 export interface InputSyncOptions {
-    type?: "number" | "text" | "password";
+    type?: "numeric" | "alphanumeric" | "password" | "password-numeric";
     onInputValueChange?: (val: string | number) => void;
     blankAllowed?: boolean;
     focusOnLoad?: boolean;
@@ -23,8 +21,9 @@ export interface InputSyncOptions {
 
 export type InputField = {
     element: InputFieldType;
-    isDirty: boolean;
+    // isDirty: boolean;
     inputName: string;
+    maxLength?: number;
 };
 
 export type InputSyncState = {
@@ -33,9 +32,10 @@ export type InputSyncState = {
     currentActiveInputIndex: number;
     // currentActiveInputName: string;
     value: string | number;
-    errors: {
-        [key in string]: boolean;
-    };
+    // errors: {
+    //     [key in string]: boolean;
+    // };
+    totalInputValueLength: number;
 };
 
 export enum KeyCodes {
@@ -43,4 +43,12 @@ export enum KeyCodes {
     ARROW_LEFT = "ArrowLeft",
     SPACEBAR = " ",
     BACKSPACE = "Backspace",
+    ENTER = "Enter",
+}
+
+export type InputTypeMap = {
+    'numeric': 'tel',
+    'alphanumeric': 'text',
+    'password': 'password',
+    'password-numeric': 'password'
 }

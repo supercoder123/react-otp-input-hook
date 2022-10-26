@@ -6,6 +6,7 @@ import {
     InputOptions,
     InputSyncOptions,
     InputSyncState,
+    InputTypeMap,
     KeyCodes,
 } from "./types";
 
@@ -37,28 +38,37 @@ const isValidInput = (value: string) => {
         KeyCodes.ARROW_LEFT,
         KeyCodes.ARROW_RIGHT,
         KeyCodes.BACKSPACE,
-        KeyCodes.BACKSPACE,
+        KeyCodes.ENTER,
+        KeyCodes.SPACEBAR
     ].includes(value);
 };
 
+/** non number or char keys */
+const SPECIAL_KEYS: string[] = [KeyCodes.ARROW_LEFT, KeyCodes.ARROW_RIGHT, KeyCodes.BACKSPACE, KeyCodes.SPACEBAR, KeyCodes.ENTER];
+
+const TYPE_MAP: InputTypeMap = {
+    'numeric': 'tel',
+    'alphanumeric': 'text',
+    'password': 'password',
+    'password-numeric': 'password'
+}
+
 const useInputSync = ({
-    type,
+    type = 'alphanumeric',
     onInputValueChange,
     blankAllowed = false,
     focusOnLoad = false,
     autoCompleteAttribute = "off",
     defaultInlineStyles,
-    defaultClassName,
     cycle = false,
-    perInputPattern
 }: InputSyncOptions) => {
     const mainRef = useRef<InputSyncState>({
         fields: [],
         uniqueNames: [],
         currentActiveInputIndex: 0,
         // currentActiveInputName: '',
-        value: type === "number" ? 0 : "",
-        errors: {},
+        value: type === "numeric" ? 0 : "",
+        totalInputValueLength: 0
     });
 
     const [value, setValue] = useState<number | string>("");
@@ -107,6 +117,10 @@ const useInputSync = ({
                 console.error("Cannot find field on load");
             }
         }
+        mainRef.current.totalInputValueLength = mainRef.current.fields.reduce((acc, input) => {
+            acc += input.maxLength!;
+            return acc;
+        }, 0);
     }, []);
 
     const isInputTextSelected = (input: InputFieldType) => {
@@ -123,7 +137,8 @@ const useInputSync = ({
             name: string,
             options: InputOptions = defaultRegisterOptions
         ) => {
-            let inputMaxLength = options.maxLength ? options.maxLength : 1;
+            const inputMaxLength = options.maxLength ? options.maxLength : 1;
+
             return {
                 autoComplete: autoCompleteAttribute,
                 "aria-label": `otp-input-${name}`,
@@ -134,7 +149,6 @@ const useInputSync = ({
                 onKeyDown: (e: React.KeyboardEvent<InputFieldType>) => {
                     const value = (e.target as InputFieldType).value;
                     const key = e.key;
-                    console.log(key)
                     /**
                      * any input blocking has to happen on key down since it happens before the key is displayed on the screen input
                      * cannot read any input values from onKeyDown event as is always updates on the next event, same with keyup event
@@ -144,9 +158,12 @@ const useInputSync = ({
                     }
                     if (
                         (value.length >= inputMaxLength &&
-                        key !== KeyCodes.BACKSPACE &&
+                        key !== KeyCodes.BACKSPACE && key !== KeyCodes.ENTER &&
                         !isInputTextSelected(e.target as InputFieldType))
                     ) {
+                        e.preventDefault();
+                    }
+                    if ((type === 'numeric' || type === 'password-numeric') && /^[\d]$/.test(key) && !SPECIAL_KEYS.includes(key)) {
                         e.preventDefault();
                     }
                 },
@@ -169,10 +186,6 @@ const useInputSync = ({
                         onInputValueChange(mainRef.current.value);
                     }
 
-                    if (!perInputPattern!(value)) {
-                        e.preventDefault();
-                    }
-
                     setValue(mainRef.current.value);
                 },
                 /**
@@ -191,9 +204,6 @@ const useInputSync = ({
                         handleKeyCodes(e);
                     }
                 },
-                onBlur: (e: React.FocusEvent<InputFieldType>) => {
-
-                },
                 onFocus: (e: React.FocusEvent<InputFieldType>) => {
                     mainRef.current.currentActiveInputIndex =
                         mainRef.current.fields.findIndex(
@@ -209,10 +219,12 @@ const useInputSync = ({
                         }
                         fieldRef.required = !!options.required;
                         mainRef.current.uniqueNames.push(name);
+                        fieldRef.type = TYPE_MAP[type];
                         mainRef.current.fields.push({
                             element: fieldRef,
-                            isDirty: false,
+                            // isDirty: false,
                             inputName: name,
+                            maxLength: inputMaxLength
                         });
                     } else {
                         mainRef.current.fields = [];
@@ -223,12 +235,16 @@ const useInputSync = ({
                 // className: defaultClassName
             };
         },
-        setValue: (val: string | number) => {
+        setValue: (val: string) => {
             if (val) {
-                const valArr = val.toString().split("");
+                let remainingValue = val.slice(0, mainRef.current.totalInputValueLength);
+                const finalValue = remainingValue;
                 mainRef.current.fields.forEach((input, i) => {
-                    input.element.value = valArr[i];
+                    const max = input.maxLength;
+                    input.element.value = remainingValue.slice(0, max);
+                    remainingValue = remainingValue.slice(max);
                 });
+                setValue(finalValue);
             }
         },
         setDisabled: (disabled: boolean) => {
@@ -246,54 +262,9 @@ const useInputSync = ({
             });
             setValue("");
         },
-        errors: mainRef.current.errors,
-        setErrors: (name: string) => {
-            if (mainRef.current.errors[name]) {
-                mainRef.current.errors[name] = true;
-            }
-            // setErrorsState(true)
-        },
         inputState: mainRef.current,
         value,
     };
 };
 
 export default useInputSync;
-
-/**
- 
-const otp = () => {
-    const {register, onChange, setValue, setDisabled, clear} = useInputSync({
-        type: number | password | text,
-    });
-    return (
-        <>
-            <input {...register('one', { maxLength: 3, required: true })} />
-            <input {...register('two', { maxLength: 1, required: true })})} />
-            <input {...register('three')} />
-            <input {...register('four')} />
-        </>
-    )
-}
-
-1. basic implementation [X]
-2. keyboard handling [X]
-3. basic on change handler and value [X]
-4. aria accessibility
-5. input ordering
-6. multiple max length [x]
-7. error handling
-8. placeholder support
-9. regex pattern support
-10. cyclable
-11. setValue
-12. ctrl a
-
-  
-{
-    isDirty: false,
-    element: field,
-    inputName: '',
-}
-  
- */
