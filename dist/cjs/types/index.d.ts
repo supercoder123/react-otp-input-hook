@@ -1,13 +1,9 @@
-
 import { CSSProperties } from "react";
-
 export interface InputOptions {
     required?: boolean;
     maxLength?: number;
 }
-
-export type InputFieldType = HTMLTextAreaElement | HTMLInputElement;
-
+export type InputFieldType = HTMLTextAreaElement & HTMLInputElement;
 export type DefaultInputSyncProps = {};
 export interface InputSyncProps {
     type?: "numeric" | "alphanumeric" | "password" | "password-numeric";
@@ -22,41 +18,29 @@ export interface InputSyncProps {
     placeholder?: string;
     numberOfInputs?: number;
 }
-
 export type InputSyncOptions = DefaultInputSyncProps & InputSyncProps;
-
-
 export type InputField = {
     element: InputFieldType;
-    // isDirty: boolean;
     inputName: string;
     maxLength?: number;
 };
-
 export type InputSyncState = {
     fields: Array<InputField>;
     uniqueNames: string[];
     currentActiveInputIndex: number;
-    // currentActiveInputName: string;
     value: string | number;
-    // errors: {
-    //     [key in string]: boolean;
-    // };
     totalInputValueLength: number;
 };
-
-export enum KeyCodes {
+export declare enum KeyCodes {
     ARROW_RIGHT = "ArrowRight",
     ARROW_LEFT = "ArrowLeft",
     SPACEBAR = " ",
     BACKSPACE = "Backspace",
-    ENTER = "Enter",
+    ENTER = "Enter"
 }
-
 export type InputTypeMap = {
-    'numeric': 'tel',
-    'alphanumeric': 'text',
-    'password': 'password',
-    'password-numeric': 'password'
-}
-
+    'numeric': 'tel';
+    'alphanumeric': 'text';
+    'password': 'password';
+    'password-numeric': 'password';
+};

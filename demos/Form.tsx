@@ -1,6 +1,6 @@
 import { useForm, Controller } from "react-hook-form";
 import React, { useEffect, useState } from "react";
-import useInputSync from "../lib/useInputSync";
+import { useOtpInput }  from "../lib";
 import TextField from '@mui/material/TextField';
 
 export default function Form() {
@@ -13,7 +13,7 @@ export default function Form() {
   });
   console.log('Form');
 
-  const { register: registerInput, clear, setDisabled, setValue, inputState, value } = useInputSync({
+  const { register: registerInput, clear, setDisabled, setValue, inputState, value } = useOTPInput({
     onInputValueChange: (v) => {
         console.log('va',v)
     }, 
