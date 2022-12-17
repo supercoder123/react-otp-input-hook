@@ -1,18 +1,13 @@
-import React from 'react';
+import React from "react";
 import { renderHook } from "@testing-library/react";
 import { useOtpInput } from "..";
-import {
-  fireEvent,
-  render,
-  screen,
-  waitFor,
-  getByTestId,
-  waitForElementToBeRemoved,
-} from '@testing-library/react';
-import userEvent from '@testing-library/user-event'
+import { fireEvent, render, screen } from "@testing-library/react";
 
+import userEvent from "@testing-library/user-event";
 
 import { BasicTestOtpInput } from "./__mocks__/BasicTestOtpInput";
+
+
 
 /**
  * check for all types of objects returned from useOtpInput
@@ -62,22 +57,27 @@ describe("useOtpInput tests", () => {
           // console.log(val)
         },
      */
-    const { getByText, getAllByRole, getByRole } = render(<BasicTestOtpInput onInputValueChange={onInputValueChange} onSubmit={onSubmit} />);
+    const { getByText, getAllByRole, getByRole } = render(
+      <BasicTestOtpInput
+        onInputValueChange={onInputValueChange}
+        onSubmit={onSubmit}
+      />
+    );
 
-    const inputs = getAllByRole('textbox');
+    const inputs = getAllByRole("textbox");
 
     // focus
     expect(document.activeElement).toBe(inputs[0]);
 
     // onInputValueChange
-    const inputText = '12345';
+    const inputText = "12345";
     await user.keyboard(inputText);
     expect(onInputValueChange).toHaveBeenCalledTimes(5);
     expect(onInputValueChange.mock.calls.length).toBe(5);
 
     function testInput() {
-      let text = '';
-      inputText.split('').forEach((char, i) => {
+      let text = "";
+      inputText.split("").forEach((char, i) => {
         text += char;
         expect(onInputValueChange.mock.calls[i][0]).toBe(text);
       });
@@ -94,16 +94,16 @@ describe("useOtpInput tests", () => {
 
     // placeholder
     inputs.forEach((input, i) => {
-      expect((input as HTMLInputElement).placeholder).toBe('*');
+      expect((input as HTMLInputElement).placeholder).toBe("*");
     });
 
     // type
     inputs.forEach((input, i) => {
-      expect((input as HTMLInputElement).type).toBe('text');
+      expect((input as HTMLInputElement).type).toBe("text");
     });
 
     // onSubmit
-    const submitButton = getByRole('button', { name: /Submit/i });
+    const submitButton = getByRole("button", { name: /Submit/i });
 
     await user.click(submitButton);
     expect(onSubmit).toHaveBeenCalled();
@@ -113,7 +113,7 @@ describe("useOtpInput tests", () => {
     await user.click(clear);
 
     inputs.forEach((input, i) => {
-      expect((input as HTMLInputElement).value).toBe('');
+      expect((input as HTMLInputElement).value).toBe("");
     });
 
     // onSubmit on empty inputs
@@ -122,4 +122,77 @@ describe("useOtpInput tests", () => {
     expect(onSubmit).not.toHaveBeenCalled();
   });
 
+  test("Check returned props from useOtpInput Hook", async () => {
+    const { getByText, getAllByRole, getByRole, getByTestId } = render(
+      <BasicTestOtpInput />
+    );
+    const user = userEvent.setup();
+
+    const inputs = getAllByRole("textbox");
+    const numOfInputs = inputs.length;
+
+    inputs.forEach((input, i) => {
+      expect((input as HTMLInputElement).disabled).toBe(false);
+    });
+
+    // setDisabled
+    const disableButton = getByRole("button", { name: /Disable/i });
+    await user.click(disableButton);
+
+    inputs.forEach((input, i) => {
+      expect((input as HTMLInputElement).disabled).toBe(true);
+    });
+
+    await user.click(disableButton);
+
+    inputs.forEach((input, i) => {
+      expect((input as HTMLInputElement).disabled).toBe(false);
+    });
+
+    // setValue
+    inputs.forEach((input, i) => {
+      expect((input as HTMLInputElement).value).toBe("");
+    });
+
+    const setValueButton = getByRole("button", { name: /Set Value/i });
+    await user.click(setValueButton);
+
+    const inputText = "948983";
+    inputs.forEach((input, i) => {
+      expect((input as HTMLInputElement).value).toBe(inputText[i]);
+    });
+
+    // value
+    const heading = getByRole("heading");
+    expect((heading as HTMLHeadingElement).textContent).toBe(
+      inputText.slice(0, numOfInputs)
+    );
+
+    await user.click(inputs[0]);
+
+    expect(document.activeElement).toBe(inputs[0]);
+    expect((inputs[0] as HTMLInputElement).selectionEnd).toBe(1);
+    (inputs[0] as HTMLInputElement).setSelectionRange(0, 1)
+
+    const inputNum = "p6789";
+
+
+    inputs.forEach(async (input, i) => {
+      await userEvent.clear(input);
+      await user.keyboard(inputNum[i]);
+      expect((input as HTMLInputElement).value).toBe(inputNum[i]);
+    });
+    expect(document.activeElement).toBe(inputs[4]);
+
+    // error
+    const error = screen.getByTestId('error-msg');
+    expect(error).toHaveTextContent('');
+    expect(error).not.toHaveTextContent('OTP ERROR');
+
+    // setError
+    const errorButton = getByRole("button", { name: /Set Error/i });
+    fireEvent.click(errorButton);
+
+    expect(error).toHaveTextContent('OTP ERROR');
+  });
 });

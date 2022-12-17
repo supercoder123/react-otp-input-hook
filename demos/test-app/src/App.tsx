@@ -20,7 +20,7 @@ const LoopInput = memo(({ inputs }) => {
 export function OTPInputBasic() {
   const { register, clear, setDisabled, setValue, value, error, setError, inputs } = useOtpInput<HTMLInputElement>({
     // type: 'alphanumeric',
-    // focusOnLoad: true,
+    focusOnLoad: true,
     // blankAllowed: true,
     // placeholder: '*',
     // cycle: true,
@@ -45,7 +45,6 @@ export function OTPInputBasic() {
     required: true,
   }
 
-  console.log(inputs)
   return (
     <>
       <form onSubmit={(e) => {
@@ -87,6 +86,8 @@ export function OTPInputBasic() {
         }}>Submit</button>
         <button type="button" onClick={() => { setError('Invalid') }}>SetError</button>
         <button type="button" onClick={() => { setError('') }}>Clear Error</button>
+        <button type="button" onClick={() => { setValue('asdbd') }}>Set Value</button>
+
 
       </form>
     </>

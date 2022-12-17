@@ -3,5 +3,6 @@ module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'jsdom',
   // testRegex: '(/__tests__/.*|(\\.|/)(test|spec))\\.([t]sx?)$',
-  testPathIgnorePatterns: ["/__mocks__/"]
+  testPathIgnorePatterns: ["/__mocks__/"],
+  setupFilesAfterEnv: ['<rootDir>/jest-setup.ts']
 };

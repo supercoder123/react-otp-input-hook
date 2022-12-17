@@ -14,22 +14,7 @@ const defaultRegisterOptions = {
     required: false,
 };
 
-const focusInputField = (
-    fields: Array<InputField>,
-    currentActiveIndex: number
-) => {
-    if (isValidFieldIndex(fields, currentActiveIndex)) {
-        fields[currentActiveIndex].element.focus();
-        return fields[currentActiveIndex];
-    }
-};
 
-const isValidFieldIndex = (
-    fields: Array<InputField>,
-    currentActiveIndex: number
-) => {
-    return currentActiveIndex < fields.length && currentActiveIndex >= 0;
-};
 
 const isValidInput = (value: string) => {
     return ![
@@ -75,14 +60,31 @@ const useOtpInput = <T extends InputFieldType = HTMLInputElement>({
     const [value, setValueState] = useState<number | string>("");
     const [error, setError] = useState<string>("");
 
+    const focusInputField = (
+        currentActiveIndex: number
+    ) => {
+        const fields = mainRef.current.fields;
+        if (isValidFieldIndex(currentActiveIndex)) {
+            fields[currentActiveIndex].element.focus();
+            return fields[currentActiveIndex];
+        }
+    };
+    
+    const isValidFieldIndex = (
+        currentActiveIndex: number
+    ) => {
+        const fields = mainRef.current.fields;
+        return currentActiveIndex < fields.length && currentActiveIndex >= 0;
+    };
+
     const handleKeyCodes = (e: React.KeyboardEvent<T>) => {
         const key = e.key;
         if (key === KeyCodes.ARROW_LEFT) {
-            focusInputField(mainRef.current.fields, getPrevIndex());
+            focusInputField(getPrevIndex());
         } else if (key === KeyCodes.ARROW_RIGHT) {
-            focusInputField(mainRef.current.fields, getNextIndex());
+            focusInputField(getNextIndex());
         } else if (key === KeyCodes.BACKSPACE) {
-            focusInputField(mainRef.current.fields, getPrevIndex());
+            focusInputField(getPrevIndex());
         } else if (key === KeyCodes.SPACEBAR) {
             e.preventDefault();
         }
@@ -90,24 +92,13 @@ const useOtpInput = <T extends InputFieldType = HTMLInputElement>({
 
     const getNextIndex = () => {
         const idx = mainRef.current.currentActiveInputIndex;
-        mainRef.current.currentActiveInputIndex = isValidFieldIndex(
-            mainRef.current.fields,
-            idx + 1
-        )
-            ? idx + 1
-            : cycle ? 0 : idx;    
+        mainRef.current.currentActiveInputIndex = isValidFieldIndex(idx + 1) ? idx + 1 : cycle ? 0 : idx;    
         return mainRef.current.currentActiveInputIndex;
     };
 
     const getPrevIndex = () => {
         const idx = mainRef.current.currentActiveInputIndex;
-        mainRef.current.currentActiveInputIndex = isValidFieldIndex(
-            mainRef.current.fields,
-            idx - 1
-        )
-            ? idx - 1
-            : cycle ? mainRef.current.fields.length - 1 : idx;
-
+        mainRef.current.currentActiveInputIndex = isValidFieldIndex(idx - 1) ? idx - 1: cycle ? mainRef.current.fields.length - 1 : idx;
         return mainRef.current.currentActiveInputIndex;
     };
 
@@ -138,6 +129,7 @@ const useOtpInput = <T extends InputFieldType = HTMLInputElement>({
         if (val) {
             const numberOfInputs = mainRef.current.totalInputValueLength;
             let remainingValue = val.toString().slice(0, numberOfInputs);
+            const inputTextLength = remainingValue.length;
             const finalValue = remainingValue;
             for (let i=startIndex; i<numberOfInputs; i++) {
                 const inputFields = mainRef.current.fields;
@@ -145,7 +137,9 @@ const useOtpInput = <T extends InputFieldType = HTMLInputElement>({
                 inputFields[i].element.value = remainingValue.slice(0, max);
                 remainingValue = remainingValue.slice(max);
             }
+            mainRef.current.fields[inputTextLength - 1].element.focus();
             setValueState(finalValue);
+            mainRef.current.value = finalValue;
         }
     }
 
@@ -186,10 +180,9 @@ const useOtpInput = <T extends InputFieldType = HTMLInputElement>({
                  */
                 onInput: (e: React.FormEvent<T>) => {
                     const value = (e.target as T).value;
-
                     /** This is not called while pressing backspace */
                     if (value.length >= inputMaxLength && value !== "") {
-                        focusInputField(mainRef.current.fields, getNextIndex());
+                        focusInputField(getNextIndex());
                     }
 
                     mainRef.current.value = mainRef.current.fields
@@ -206,7 +199,7 @@ const useOtpInput = <T extends InputFieldType = HTMLInputElement>({
                  * Cannot perform any input blocking here as it is too late
                  */
                 onKeyUp: (e: React.KeyboardEvent<T>) => {
-                    e.preventDefault();
+
                     const value = (e.target as T).value;
                     const key = e.key;
 
@@ -223,7 +216,10 @@ const useOtpInput = <T extends InputFieldType = HTMLInputElement>({
                         mainRef.current.fields.findIndex(
                             (inputEl) => inputEl.element === e.target
                         );
-                    (e.target as T).select();
+                        // hack
+                        
+                        setTimeout(() => {(e.target as T).select()});
+                        // (e.target as T).select()
                 },
                 ref: useCallback((fieldRef: T) => {
                     if (fieldRef) {
