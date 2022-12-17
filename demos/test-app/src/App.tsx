@@ -1,5 +1,8 @@
 import { memo } from 'react'
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useState, useMemo } from 'react';
+
+if (import.meta.hot)
+import.meta.hot.accept(() => import.meta.hot.invalidate())
 
 import reactLogo from './assets/react.svg'
 import './App.css'
@@ -28,7 +31,7 @@ export function OTPInputBasic() {
     // onInputValueChange(val) {
     //   console.log(val)
     // },
-    // numberOfInputs: 5,
+    numberOfInputs: 5,
   });
 
   // const { inputs, clear: cc, value: sv, } = useOtpInput({

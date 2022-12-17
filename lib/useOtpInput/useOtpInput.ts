@@ -158,6 +158,7 @@ const useOtpInput = <T extends InputFieldType = HTMLInputElement>({
             return {
                 autoComplete: autoCompleteAttribute,
                 "aria-label": `otp-input-${name}`,
+                name: `otp-input-${name}`,
                 // Sequence is onKeyDown, onInput, onKeyUp, that's just how keyboard events work  Need to use a combination of all 3 since keyCode values are not part of the oninput event 
                 onKeyDown: (e: React.KeyboardEvent<T>) => {
                     const value = (e.target as T).value;
