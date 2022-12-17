@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import { useOtpInput } from "../..";
 
 interface Props {
@@ -7,27 +7,27 @@ interface Props {
 }
 
 export function BasicTestOtpInput({ onInputValueChange, onSubmit }: Props) {
-  const [ disabled, setInputDisabled ] = useState(false);
-  const { register, clear, setDisabled, setValue, value, error, setError } = useOtpInput<HTMLInputElement>({
-    type: 'alphanumeric',
-    focusOnLoad: true,
-    placeholder: '*',
-    onInputValueChange
-  });
+  const [disabled, setInputDisabled] = useState(false);
+  const { register, clear, setDisabled, setValue, value, error, setError } =
+    useOtpInput<HTMLInputElement>({
+      type: "alphanumeric",
+      focusOnLoad: true,
+      placeholder: "*",
+      onInputValueChange,
+    });
 
   useEffect(() => {
     setDisabled(disabled);
-  }, [disabled])
+  }, [disabled]);
 
   const registerOptions = {
     required: true,
-  }
+  };
 
   return (
     <>
       <form role="form" onSubmit={onSubmit}>
-
-        <div data-testid="container" className={error ? 'error' : ''}>
+        <div data-testid="container" className={error ? "error" : ""}>
           <input {...register("digit-1", registerOptions)} />
           -
           <input {...register("digit-2", registerOptions)} />
@@ -45,16 +45,24 @@ export function BasicTestOtpInput({ onInputValueChange, onSubmit }: Props) {
 
         <div data-testid="error-msg">{error}</div>
 
-        <button type='button' onClick={() => clear()}>Clear</button>
-        <button type='button' onClick={() => {
-          setInputDisabled(prev => !prev);
-        }}
-        >Disable</button>
-        <button type='button' onClick={() => setValue('948983')}>Set Value</button>
-        <button type='button' onClick={() => setError('OTP ERROR')}>Set Error</button>
-
-
+        <button type="button" onClick={() => clear()}>
+          Clear
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            setInputDisabled((prev) => !prev);
+          }}
+        >
+          Disable
+        </button>
+        <button type="button" onClick={() => setValue("948983")}>
+          Set Value
+        </button>
+        <button type="button" onClick={() => setError("OTP ERROR")}>
+          Set Error
+        </button>
       </form>
     </>
-  )
+  );
 }
