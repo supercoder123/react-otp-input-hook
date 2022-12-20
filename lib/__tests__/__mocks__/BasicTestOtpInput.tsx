@@ -4,16 +4,19 @@ import { useOtpInput } from "../..";
 interface Props {
   onInputValueChange?: ((val: string) => void) | undefined;
   onSubmit?: (e: React.FormEvent) => void;
+  blankAllowed?: boolean;
+  type?: "alphanumeric" | "numeric" | "password" | "password-numeric" ;
 }
 
-export function BasicTestOtpInput({ onInputValueChange, onSubmit }: Props) {
-  const [disabled, setInputDisabled] = useState(false);
+export function BasicTestOtpInput({ onInputValueChange, onSubmit, blankAllowed,  type = 'alphanumeric' }: Props) {
+  const [ disabled, setInputDisabled ] = useState(false);
   const { register, clear, setDisabled, setValue, value, error, setError } =
     useOtpInput<HTMLInputElement>({
-      type: "alphanumeric",
+      type,
       focusOnLoad: true,
       placeholder: "*",
       onInputValueChange,
+      blankAllowed
     });
 
   useEffect(() => {
@@ -62,6 +65,7 @@ export function BasicTestOtpInput({ onInputValueChange, onSubmit }: Props) {
         <button type="button" onClick={() => setError("OTP ERROR")}>
           Set Error
         </button>
+
       </form>
     </>
   );

@@ -14,18 +14,19 @@ const defaultRegisterOptions = {
     required: false,
 };
 
-
-
-const isValidInput = (value: string) => {
-    return ![
-        "",
-        KeyCodes.ARROW_LEFT,
-        KeyCodes.ARROW_RIGHT,
-        KeyCodes.BACKSPACE,
-        KeyCodes.ENTER,
-        KeyCodes.SPACEBAR
-    ].includes(value);
-};
+type RegisterReturn<T> =  {
+    autoComplete: string;
+    "aria-label": string;
+    name: string;
+    onKeyDown: (e: React.KeyboardEvent<T>) => void;
+    onInput: (e: React.FormEvent<T>) => void;
+    onKeyUp: (e: React.KeyboardEvent<T>) => void;
+    onFocus: (e: React.FocusEvent<T>) => void;
+    ref: (fieldRef: T) => void;
+    style: React.CSSProperties | undefined;
+    placeholder: string;
+    onPaste: (e: ClipboardEvent<T>) => void;
+}
 
 /** non number or char keys */
 const SPECIAL_KEYS: string[] = [KeyCodes.ARROW_LEFT, KeyCodes.ARROW_RIGHT, KeyCodes.BACKSPACE, KeyCodes.SPACEBAR, KeyCodes.ENTER];
@@ -52,7 +53,6 @@ const useOtpInput = <T extends InputFieldType = HTMLInputElement>({
         fields: [],
         uniqueNames: [],
         currentActiveInputIndex: 0,
-        // currentActiveInputName: '',
         value: type === "numeric" ? 0 : "",
         totalInputValueLength: 0,
     });
@@ -216,10 +216,7 @@ const useOtpInput = <T extends InputFieldType = HTMLInputElement>({
                         mainRef.current.fields.findIndex(
                             (inputEl) => inputEl.element === e.target
                         );
-                        // hack
-                        
-                        setTimeout(() => {(e.target as T).select()});
-                        // (e.target as T).select()
+                        (e.target as T).setSelectionRange(0, inputMaxLength)
                 },
                 ref: useCallback((fieldRef: T) => {
                     if (fieldRef) {
@@ -272,7 +269,7 @@ const useOtpInput = <T extends InputFieldType = HTMLInputElement>({
         // inputState: mainRef.current,
         value,
         /** experimental - may change in future */
-        get inputs () {
+        get inputs (): RegisterReturn<T>[] {
             let inputProps = [];
             if (typeof numberOfInputs === 'number' && numberOfInputs > 0) {
                 for (let i=0; i<numberOfInputs; i++) {

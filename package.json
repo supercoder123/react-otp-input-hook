@@ -8,6 +8,7 @@
   "license": "MIT",
   "scripts": {
     "test": "jest --watch",
+    "test:cov": "jest --coverage",
     "build": "npm run build:cjs && npm run build:esm",
     "build-ts": "tsc",
     "build:cjs": "tsc -p tsconfig.json --module commonjs --outDir dist/cjs --target es5",

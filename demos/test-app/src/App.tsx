@@ -1,25 +1,29 @@
-import { memo } from 'react'
-import { useEffect, useState, useMemo } from 'react';
+import { memo } from "react";
+import React from "react";
+import { useEffect, useState, useMemo } from "react";
 
-if (import.meta.hot)
-import.meta.hot.accept(() => import.meta.hot.invalidate())
-
-import reactLogo from './assets/react.svg'
-import './App.css'
-import { useOtpInput } from '../../../lib';
+import reactLogo from "./assets/react.svg";
+import "./App.css";
+import { useOtpInput } from "../../../lib";
 
 const LoopInput = memo(({ inputs }) => {
-
   return inputs.map((inputProps, i) => {
-    return (
-      <input key={i} required {...inputProps} />
-    )
-  })
-})
+    return <input key={i} required {...inputProps} />;
+  });
+});
 
 export function OTPInputBasic() {
-  const { register, clear, setDisabled, setValue, value, error, setError, inputs } = useOtpInput<HTMLInputElement>({
-    // type: 'alphanumeric',
+  const {
+    register,
+    clear,
+    setDisabled,
+    setValue,
+    value,
+    error,
+    setError,
+    inputs,
+  } = useOtpInput<HTMLInputElement>({
+    type: 'numeric',
     focusOnLoad: true,
     // blankAllowed: true,
     // placeholder: '*',
@@ -43,13 +47,15 @@ export function OTPInputBasic() {
   const memInputs = useMemo(() => inputs, []);
   const registerOptions = {
     required: true,
-  }
+  };
 
   return (
     <>
-      <form onSubmit={(e) => {
-        e.preventDefault();
-      }}>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+        }}
+      >
         <div className="container">
           <input {...register("digit-1", registerOptions)} />
           -
@@ -62,14 +68,17 @@ export function OTPInputBasic() {
           <input {...register("digit-5", registerOptions)} />
         </div>
 
-        <div className='container'>
-          {
-            memInputs.map((inputProps, i) => {
-              return (
-                <input className={error ? 'error' : ''} key={i} required {...inputProps} />
-              )
-            })
-          }
+        <div className="container">
+          {memInputs.map((inputProps, i) => {
+            return (
+              <input
+                className={error ? "error" : ""}
+                key={i}
+                required
+                {...inputProps}
+              />
+            );
+          })}
           {/* <LoopInput inputs={memInputs}/> */}
         </div>
 
@@ -77,31 +86,105 @@ export function OTPInputBasic() {
         {/* <div className="value">Value: {sv}</div> */}
         <div className="value">Error: {error}</div>
 
-        <button type="button" onClick={() => { clear(); }}>Clear</button>
-        <button type='submit' onClick={() => {
-          // console.log('es', sv, sv.toString().length);
-          // if (sv.toString().length >= 3) {
-          //   setValue(sv.toString())
-          // }
-        }}>Submit</button>
-        <button type="button" onClick={() => { setError('Invalid') }}>SetError</button>
-        <button type="button" onClick={() => { setError('') }}>Clear Error</button>
-        <button type="button" onClick={() => { setValue('asdbd') }}>Set Value</button>
-
-
+        <button
+          type="button"
+          onClick={() => {
+            clear();
+          }}
+        >
+          Clear
+        </button>
+        <button
+          type="submit"
+          onClick={() => {
+            // console.log('es', sv, sv.toString().length);
+            // if (sv.toString().length >= 3) {
+            //   setValue(sv.toString())
+            // }
+          }}
+        >
+          Submit
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            setError("Invalid");
+          }}
+        >
+          SetError
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            setError("");
+          }}
+        >
+          Clear Error
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            setValue("asdbd");
+          }}
+        >
+          Set Value
+        </button>
       </form>
     </>
   );
 }
 
-function App() {
-  const [count, setCount] = useState(0)
+const Component = React.memo(({ onChange }: any) => {
+
+  const { inputs } = useOtpInput({
+    numberOfInputs: 5,
+    onInputValueChange: onChange,
+    focusOnLoad: true,
+    placeholder: "*",
+    blankAllowed: true
+  });
 
   return (
-    <div className="App">
+    <>
+      {inputs.map((input, i) => {
+        return <input required key={i} {...input} />;
+      })}
+    </>
+  );
+});
+
+function App() {
+  const [val, setVal] = useState('');
+
+  return (
+    <div>
       <OTPInputBasic />
+
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+        }}
+      >
+      <Component 
+        onChange={(val: any) => {
+          console.log(val)
+          setVal(val)
+        }}
+      />
+
+        {val}
+
+      <button
+          type="submit"
+          onClick={() => {
+            console.log(val);
+          }}
+        >
+          Submit
+        </button>
+      </form>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
