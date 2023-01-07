@@ -1,48 +1,111 @@
- # React otp input hook
+
+<center>
+  <img width="300" src="./images/lib-logo.svg" alt="React OTP Input Hook" /> 
+</center>
+   
+A simple react hook to create otp inputs with ease.
+
+
+## Features
+- Small size
+- Easy to use
+- Does not come with any styling so you are free to use any input component of your own. (refs need to be forwarded)
+- Written in typescript
+- Lots of options
+- Works with many libraries
+
+## Basic Usage
 
 ```
-const otp = () => {
-    const { register, clear, setDisabled, setValue, inputState, value } = useInputSync({
-        type: 'numeric',
-        onInputValueChange: () => {},
-        blankAllowed: true,
-        focusOnLoad: true,
-        cycle: false,
-        defaultInlineStyles: {
-            width: '80px',
-            height: '40px',
-            fontSize: '20px',
-            textAlign: 'center',
-            border: 'none',
-            borderBottom: '1px solid black'
-        }
-    });
-    return (
-        <>
-            <input {...register('one', { maxLength: 3, required: true })} />
-            <input {...register('two', { maxLength: 1, required: true })})} />
-            <input {...register('three')} />
-            <input {...register('four')} />
-        </>
-    )
+const BasicOTPComponent = ({ onChange }: { onChange: (val: string) => void }) => {
+  const { register } = useOtpInput({
+    onInputValueChange: onChange,
+  });
+
+  const defaultOptions = { required: true };
+
+  return (
+    <div style={{ padding: '10px' }}>
+      <input {...register("digit-1", defaultOptions)} />
+      <input {...register("digit-2", defaultOptions)} />
+      <input {...register("digit-3", defaultOptions)} />
+      <input {...register("digit-4", defaultOptions)} />
+      <input {...register("digit-5", defaultOptions)} />
+    </div>
+  );
+};
+```
+
+## Use Inside any form
+```
+// styles 
+
+form {
+  display: flex;
+  flex-direction: column;
+}
+form input {
+  height: 40px;
+  font-size: 20px;
+  padding: 10px;
+  margin-right: 10px;
+  margin-left: 10px;
+  width: 40px;
+  text-align: center;
+  font-family: sans-serif;
+}
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #1a1a1a;
+  cursor: pointer;
+  transition: border-color 0.25s;
 }
 ```
 
-## TODO  
 
-1. basic implementation [X]
-2. keyboard handling [X]
-3. basic on change handler and value [X]
-4. aria accessibility
-5. input ordering
-6. multiple max length [X]
-7. error handling - not needed
-8. placeholder support [X]
-9. regex pattern support
-10. cyclable [X]
-11. setValue [X]
-12. usage with chakra ui [X]
-13. usage with material ui [X]
-14. usage with react-hook-form [X]
-15. usage with styled components
-16. TESTS !!!!!
+
+```
+function App() {
+  const [value, setValue] = useState("");
+
+  return (
+    <div>
+      <form
+        style={{ display: "flex", flexDirection: "column" }}
+        onSubmit={(e) => {
+          e.preventDefault();
+          console.log('Value', value);
+        }}
+      >
+
+        <BasicOTPComponent
+          onChange={(value: any) => {
+            console.log(value);
+            setValue(value);
+          }}
+        />
+
+        <button
+          type="submit"
+        >
+          Submit
+        </button>
+      </form>
+
+      <div style={{minHeight: '24px', padding: '10px'}}>{value}</div>
+    </div>
+  );
+}
+```
+
+
+## Output
+
+<center>
+  <img width="100%" alt="Basic component output" src="./images/basic-component.gif" />
+</center>

@@ -23,7 +23,7 @@ export function OTPInputBasic() {
     setError,
     inputs,
   } = useOtpInput<HTMLInputElement>({
-    type: 'numeric',
+    type: "numeric",
     focusOnLoad: true,
     // blankAllowed: true,
     // placeholder: '*',
@@ -134,14 +134,13 @@ export function OTPInputBasic() {
   );
 }
 
-const Component = React.memo(({ onChange }: any) => {
-
+const BasicComponentLooped = React.memo(({ onChange }: any) => {
   const { inputs } = useOtpInput({
     numberOfInputs: 5,
     onInputValueChange: onChange,
     focusOnLoad: true,
     placeholder: "*",
-    blankAllowed: true
+    blankAllowed: true,
   });
 
   return (
@@ -153,36 +152,51 @@ const Component = React.memo(({ onChange }: any) => {
   );
 });
 
+const BasicOTPComponent = ({ onChange }: { onChange: (val: string) => void }) => {
+  const { register } = useOtpInput({
+    onInputValueChange: onChange,
+  });
+
+  const defaultOptions = { required: true };
+
+  return (
+    <div style={{ padding: '10px 0' }}>
+      <input {...register("digit-1", defaultOptions)} />
+      <input {...register("digit-2", defaultOptions)} />
+      <input {...register("digit-3", defaultOptions)} />
+      <input {...register("digit-4", defaultOptions)} />
+      <input {...register("digit-5", defaultOptions)} />
+    </div>
+  );
+};
+
 function App() {
-  const [val, setVal] = useState('');
+  const [value, setValue] = useState("");
 
   return (
     <div>
-      <OTPInputBasic />
-
       <form
         onSubmit={(e) => {
           e.preventDefault();
+          console.log('Value', value);
         }}
       >
-      <Component 
-        onChange={(val: any) => {
-          console.log(val)
-          setVal(val)
-        }}
-      />
 
-        {val}
-
-      <button
-          type="submit"
-          onClick={() => {
-            console.log(val);
+        <BasicOTPComponent
+          onChange={(value: any) => {
+            console.log(value);
+            setValue(value);
           }}
+        />
+
+        <button
+          type="submit"
         >
           Submit
         </button>
       </form>
+
+      <div style={{minHeight: '24px', padding: '10px'}}>{value}</div>
     </div>
   );
 }

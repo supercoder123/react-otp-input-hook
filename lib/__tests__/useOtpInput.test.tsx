@@ -305,7 +305,7 @@ describe("useOtpInput tests", () => {
       );
     };
 
-    const {rerender} = render(<Component />);
+    render(<Component />);
 
     const inputs = screen.getAllByRole("textbox");
     const numOfInputs = inputs.length;
