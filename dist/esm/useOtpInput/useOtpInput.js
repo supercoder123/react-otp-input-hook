@@ -1,27 +1,8 @@
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useRef, useState, useCallback, useLayoutEffect } from "react";
 import { KeyCodes, } from "../types";
 const defaultRegisterOptions = {
     maxLength: 1,
     required: false,
-};
-const focusInputField = (fields, currentActiveIndex) => {
-    if (isValidFieldIndex(fields, currentActiveIndex)) {
-        fields[currentActiveIndex].element.focus();
-        return fields[currentActiveIndex];
-    }
-};
-const isValidFieldIndex = (fields, currentActiveIndex) => {
-    return currentActiveIndex < fields.length && currentActiveIndex >= 0;
-};
-const isValidInput = (value) => {
-    return ![
-        "",
-        KeyCodes.ARROW_LEFT,
-        KeyCodes.ARROW_RIGHT,
-        KeyCodes.BACKSPACE,
-        KeyCodes.ENTER,
-        KeyCodes.SPACEBAR
-    ].includes(value);
 };
 const SPECIAL_KEYS = [KeyCodes.ARROW_LEFT, KeyCodes.ARROW_RIGHT, KeyCodes.BACKSPACE, KeyCodes.SPACEBAR, KeyCodes.ENTER];
 const TYPE_MAP = {
@@ -38,18 +19,29 @@ const useOtpInput = ({ type = 'alphanumeric', onInputValueChange, blankAllowed =
         value: type === "numeric" ? 0 : "",
         totalInputValueLength: 0,
     });
-    const [value, setValue] = useState("");
+    const [value, setValueState] = useState("");
     const [error, setError] = useState("");
+    const focusInputField = (currentActiveIndex) => {
+        const fields = mainRef.current.fields;
+        if (isValidFieldIndex(currentActiveIndex)) {
+            fields[currentActiveIndex].element.focus();
+            return fields[currentActiveIndex];
+        }
+    };
+    const isValidFieldIndex = (currentActiveIndex) => {
+        const fields = mainRef.current.fields;
+        return currentActiveIndex < fields.length && currentActiveIndex >= 0;
+    };
     const handleKeyCodes = (e) => {
         const key = e.key;
         if (key === KeyCodes.ARROW_LEFT) {
-            focusInputField(mainRef.current.fields, getPrevIndex());
+            focusInputField(getPrevIndex());
         }
         else if (key === KeyCodes.ARROW_RIGHT) {
-            focusInputField(mainRef.current.fields, getNextIndex());
+            focusInputField(getNextIndex());
         }
         else if (key === KeyCodes.BACKSPACE) {
-            focusInputField(mainRef.current.fields, getPrevIndex());
+            focusInputField(getPrevIndex());
         }
         else if (key === KeyCodes.SPACEBAR) {
             e.preventDefault();
@@ -57,19 +49,15 @@ const useOtpInput = ({ type = 'alphanumeric', onInputValueChange, blankAllowed =
     };
     const getNextIndex = () => {
         const idx = mainRef.current.currentActiveInputIndex;
-        mainRef.current.currentActiveInputIndex = isValidFieldIndex(mainRef.current.fields, idx + 1)
-            ? idx + 1
-            : cycle ? 0 : idx;
+        mainRef.current.currentActiveInputIndex = isValidFieldIndex(idx + 1) ? idx + 1 : cycle ? 0 : idx;
         return mainRef.current.currentActiveInputIndex;
     };
     const getPrevIndex = () => {
         const idx = mainRef.current.currentActiveInputIndex;
-        mainRef.current.currentActiveInputIndex = isValidFieldIndex(mainRef.current.fields, idx - 1)
-            ? idx - 1
-            : cycle ? mainRef.current.fields.length - 1 : idx;
+        mainRef.current.currentActiveInputIndex = isValidFieldIndex(idx - 1) ? idx - 1 : cycle ? mainRef.current.fields.length - 1 : idx;
         return mainRef.current.currentActiveInputIndex;
     };
-    useEffect(() => {
+    useLayoutEffect(() => {
         if (focusOnLoad) {
             try {
                 mainRef.current.fields[0].element.focus();
@@ -89,12 +77,29 @@ const useOtpInput = ({ type = 'alphanumeric', onInputValueChange, blankAllowed =
         }
         return false;
     };
+    const fillInputValue = (startIndex = 0, val) => {
+        if (val) {
+            const numberOfInputs = mainRef.current.fields.length;
+            let remainingValue = val.toString().slice(0, numberOfInputs);
+            const inputTextLength = remainingValue.length;
+            const finalValue = remainingValue;
+            for (let i = startIndex; i < Math.min(numberOfInputs, inputTextLength); i++) {
+                const inputFields = mainRef.current.fields;
+                const max = inputFields[i].maxLength;
+                inputFields[i].element.value = remainingValue.slice(0, max);
+                remainingValue = remainingValue.slice(max);
+            }
+            setValueState(finalValue);
+            mainRef.current.value = finalValue;
+        }
+    };
     return {
-        register: (name, options = defaultRegisterOptions) => {
+        register(name, options = defaultRegisterOptions) {
             const inputMaxLength = options.maxLength ? options.maxLength : 1;
             return {
                 autoComplete: autoCompleteAttribute,
                 "aria-label": `otp-input-${name}`,
+                name: `otp-input-${name}`,
                 onKeyDown: (e) => {
                     const value = e.target.value;
                     const key = e.key;
@@ -113,7 +118,7 @@ const useOtpInput = ({ type = 'alphanumeric', onInputValueChange, blankAllowed =
                 onInput: (e) => {
                     const value = e.target.value;
                     if (value.length >= inputMaxLength && value !== "") {
-                        focusInputField(mainRef.current.fields, getNextIndex());
+                        focusInputField(getNextIndex());
                     }
                     mainRef.current.value = mainRef.current.fields
                         .map((input) => input.element.value)
@@ -121,10 +126,9 @@ const useOtpInput = ({ type = 'alphanumeric', onInputValueChange, blankAllowed =
                     if (onInputValueChange) {
                         onInputValueChange(mainRef.current.value);
                     }
-                    setValue(mainRef.current.value);
+                    setValueState(mainRef.current.value);
                 },
                 onKeyUp: (e) => {
-                    e.preventDefault();
                     const value = e.target.value;
                     const key = e.key;
                     if (value.length === 0 ||
@@ -136,7 +140,7 @@ const useOtpInput = ({ type = 'alphanumeric', onInputValueChange, blankAllowed =
                 onFocus: (e) => {
                     mainRef.current.currentActiveInputIndex =
                         mainRef.current.fields.findIndex((inputEl) => inputEl.element === e.target);
-                    e.target.select();
+                    e.target.setSelectionRange(0, inputMaxLength);
                 },
                 ref: useCallback((fieldRef) => {
                     if (fieldRef) {
@@ -149,7 +153,9 @@ const useOtpInput = ({ type = 'alphanumeric', onInputValueChange, blankAllowed =
                         }
                         fieldRef.maxLength = inputMaxLength;
                         mainRef.current.uniqueNames.push(name);
-                        fieldRef.type = TYPE_MAP[type];
+                        if (fieldRef instanceof HTMLInputElement) {
+                            fieldRef.type = TYPE_MAP[type];
+                        }
                         mainRef.current.fields.push({
                             element: fieldRef,
                             inputName: name,
@@ -158,20 +164,16 @@ const useOtpInput = ({ type = 'alphanumeric', onInputValueChange, blankAllowed =
                     }
                 }, []),
                 style: defaultInlineStyles,
-                placeholder
+                placeholder,
+                onPaste: (e) => {
+                    const paste = e.clipboardData.getData("text");
+                    fillInputValue(mainRef.current.currentActiveInputIndex, paste);
+                    const numberOfInputs = mainRef.current.fields.length;
+                }
             };
         },
         setValue: (val) => {
-            if (val) {
-                let remainingValue = val.toString().slice(0, mainRef.current.totalInputValueLength);
-                const finalValue = remainingValue;
-                mainRef.current.fields.forEach((input, i) => {
-                    const max = input.maxLength;
-                    input.element.value = remainingValue.slice(0, max);
-                    remainingValue = remainingValue.slice(max);
-                });
-                setValue(finalValue);
-            }
+            fillInputValue(0, val);
         },
         setDisabled: (disabled) => {
             mainRef.current.fields.forEach((input) => {
@@ -184,7 +186,7 @@ const useOtpInput = ({ type = 'alphanumeric', onInputValueChange, blankAllowed =
             mainRef.current.fields.forEach((input) => {
                 input.element.value = "";
             });
-            setValue("");
+            setValueState("");
         },
         value,
         get inputs() {
@@ -196,6 +198,7 @@ const useOtpInput = ({ type = 'alphanumeric', onInputValueChange, blankAllowed =
                 return inputProps;
             }
             else {
+                console.warn('Please provide `numOfInputs` to use the input array map');
                 return [];
             }
         },

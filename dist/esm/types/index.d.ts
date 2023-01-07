@@ -3,7 +3,7 @@ export interface InputOptions {
     required?: boolean;
     maxLength?: number;
 }
-export type InputFieldType = HTMLTextAreaElement & HTMLInputElement;
+export type InputFieldType = HTMLTextAreaElement | HTMLInputElement;
 export type DefaultInputSyncProps = {};
 export interface InputSyncProps {
     type?: "numeric" | "alphanumeric" | "password" | "password-numeric";
