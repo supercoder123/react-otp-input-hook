@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useCallback, useMemo, ClipboardEvent, Ref, RefObject } from "react";
+import React, { useEffect, useRef, useState, useCallback, useMemo, ClipboardEvent, Ref, RefObject, useLayoutEffect } from "react";
 import {
     InputField,
     InputFieldType,
@@ -102,7 +102,7 @@ const useOtpInput = <T extends InputFieldType = HTMLInputElement>({
         return mainRef.current.currentActiveInputIndex;
     };
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         if (focusOnLoad) {
             try {
                 mainRef.current.fields[0].element.focus();
@@ -127,17 +127,16 @@ const useOtpInput = <T extends InputFieldType = HTMLInputElement>({
 
     const fillInputValue = (startIndex: number = 0, val: string | number) => {
         if (val) {
-            const numberOfInputs = mainRef.current.totalInputValueLength;
+            const numberOfInputs = mainRef.current.fields.length;
             let remainingValue = val.toString().slice(0, numberOfInputs);
             const inputTextLength = remainingValue.length;
             const finalValue = remainingValue;
-            for (let i=startIndex; i<numberOfInputs; i++) {
+            for (let i=startIndex; i<Math.min(numberOfInputs, inputTextLength); i++) {
                 const inputFields = mainRef.current.fields;
                 const max = inputFields[i].maxLength;
                 inputFields[i].element.value = remainingValue.slice(0, max);
                 remainingValue = remainingValue.slice(max);
             }
-            mainRef.current.fields[inputTextLength - 1].element.focus();
             setValueState(finalValue);
             mainRef.current.value = finalValue;
         }
@@ -192,7 +191,6 @@ const useOtpInput = <T extends InputFieldType = HTMLInputElement>({
                     if (onInputValueChange) {
                         onInputValueChange(mainRef.current.value);
                     }
-
                     setValueState(mainRef.current.value);
                 },
                 /**
@@ -245,6 +243,8 @@ const useOtpInput = <T extends InputFieldType = HTMLInputElement>({
                 onPaste: (e: ClipboardEvent<T>)=> {
                     const paste = e.clipboardData.getData("text");
                     fillInputValue(mainRef.current.currentActiveInputIndex, paste);
+                    const numberOfInputs = mainRef.current.fields.length;
+                    // mainRef.current.fields[Math.min(numberOfInputs, paste.length) - 1].element.focus();
                 }
             };
         },

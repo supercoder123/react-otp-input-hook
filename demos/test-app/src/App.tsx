@@ -134,23 +134,20 @@ export function OTPInputBasic() {
   );
 }
 
-const BasicComponentLooped = React.memo(({ onChange }: any) => {
+const BasicOTPComponentLoop = ({ onChange }: { onChange: (val: string) => void }) => {
   const { inputs } = useOtpInput({
     numberOfInputs: 5,
     onInputValueChange: onChange,
-    focusOnLoad: true,
-    placeholder: "*",
-    blankAllowed: true,
   });
 
   return (
-    <>
+    <div>
       {inputs.map((input, i) => {
         return <input required key={i} {...input} />;
       })}
-    </>
+    </div>
   );
-});
+};
 
 const BasicOTPComponent = ({ onChange }: { onChange: (val: string) => void }) => {
   const { register } = useOtpInput({
@@ -183,8 +180,8 @@ function App() {
       >
 
         <BasicOTPComponent
-          onChange={(value: any) => {
-            console.log(value);
+          onChange={(value: string) => {
+            console.log('value', value);
             setValue(value);
           }}
         />
