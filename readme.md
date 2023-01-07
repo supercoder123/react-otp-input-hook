@@ -1,10 +1,8 @@
+<div align="center">
+<img width="300" src="./images/lib-logo.svg" alt="React OTP Input Hook" /> 
+</div> 
 
-<center>
-  <img width="300" src="./images/lib-logo.svg" alt="React OTP Input Hook" /> 
-</center>
-   
-A simple react hook to create otp inputs with ease.
-
+A simple react hook to create otp inputs with ease.  
 
 ## Features
 - Small size
