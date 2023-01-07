@@ -105,5 +105,5 @@ function App() {
 ## Output
 
 <center>
-  <img width="100%" alt="Basic component output" src="./images/Untitled.gif" />
+  <img width="100%" alt="Basic component output" src="./images/basic-component.gif" />
 </center>
