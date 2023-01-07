@@ -1,5 +1,5 @@
 <div align="center">
-<img width="300" src="./images/lib-logo.svg" alt="React OTP Input Hook" /> 
+<img width="300" src="https://raw.githubusercontent.com/supercoder123/react-otp-input-hook/main/images/lib-logo.svg" alt="React OTP Input Hook" /> 
 </div> 
 
 A simple react hook to create otp inputs with ease.  
@@ -105,5 +105,5 @@ function App() {
 ## Output
 
 <center>
-  <img width="100%" alt="Basic component output" src="./images/basic-component.gif" />
+  <img width="100%" alt="Basic component output" src="https://raw.githubusercontent.com/supercoder123/react-otp-input-hook/main/images/basic-component.gif" />
 </center>
