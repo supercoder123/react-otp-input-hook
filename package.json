@@ -6,6 +6,9 @@
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.js",
   "license": "MIT",
+  "keywords": [
+    "otp", "input", "code", "passcode", "hook", "component", "react"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/supercoder123/react-otp-input-hook.git"
