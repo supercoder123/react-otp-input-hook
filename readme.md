@@ -127,22 +127,48 @@ button {
 }
 ```
 
+## Output
+
+<center>
+  <img width="100%" alt="Basic component output" src="https://raw.githubusercontent.com/supercoder123/react-otp-input-hook/main/images/basic-component.gif" />
+</center>
+
 ## Options
 ```
 // T can be HTMLTextAreaElement or HTMLInputElement;
+const { register, setValue, setDisabled, clear, value, inputs, error, setError } = useOtpInput<T>(options);
 
-const { register, setValue, setDisabled, clear, value, inputs, error, setError } = useOtpInput<T>({
+
+options = {
   type?: "numeric" | "alphanumeric" | "password" | "password-numeric";
-  onInputValueChange?: (val: string) => void; // change listener to listen to the latest value
-  blankAllowed?: boolean; // spacebar will be allowed
-  focusOnLoad?: boolean; // focuses the first input on load
-  defaultInlineStyles?: CSSProperties; // any css style object
+
+  // change listener to listen to the latest value
+  onInputValueChange?: (val: string) => void; 
+
+  // spacebar will be allowed
+  blankAllowed?: boolean; 
+
+  // focuses the first input on load
+  focusOnLoad?: boolean; 
+
+  // any css style object
+  defaultInlineStyles?: CSSProperties;
+
+  // class will be added to all the inputs
   defaultClassName?: string;
+
+  // on or off
   autoCompleteAttribute?: string | undefined;
-  cycle?: boolean; // will cycle back to first input if key is pressed on the last input
+
+  // will cycle back to first input if key is pressed on the last input
+  cycle?: boolean; 
+
   placeholder?: string;
-  numberOfInputs?: number; // need to provide this option in order to use the inputs return value 
-});
+
+  // need to provide this option in order to use the inputs return value 
+  numberOfInputs?: number; 
+}
+
 
 interface InputOptions {
   required?: boolean;
@@ -151,34 +177,30 @@ interface InputOptions {
 
 // Returned values
   
-  // used to register an input, can be provided maxLength and required as props
-  register: (name: string, options?: InputOptions) => RegisterReturn<T>; 
-  
-  // used to set the value for all inputs
-  setValue: (val: string | number) => void;
-  
-  // disables all the inputs
-  setDisabled: (disabled: boolean) => void; 
-  
-  // clears all inputs
-  clear: () => void;
+// used to register an input, can be provided maxLength and required as props
+register: (name: string, options?: InputOptions) => RegisterReturn<T>; 
 
-  // provides the value of the otp input
-  value: string | number; 
+// used to set the value for all inputs
+setValue: (val: string | number) => void;
 
-  // Returns the inputs based on the value provided in numberOfInputs. Can be used to set the inputs in a loop instead of registering it one by one
-  readonly inputs: RegisterReturn<T>[]; 
+// disables all the inputs
+setDisabled: (disabled: boolean) => void; 
 
-  // get an error string
-  error: string;
+// clears all inputs
+clear: () => void;
 
-  // set an error string
-  setError: React.Dispatch<React.SetStateAction<string>>; 
+// provides the value of the otp input
+value: string | number; 
+
+// Returns the inputs based on the value provided in numberOfInputs. Can be used to set the inputs in a loop instead of registering it one byone
+readonly inputs: RegisterReturn<T>[]; 
+
+// get an error string
+error: string;
+
+// set an error string
+setError: React.Dispatch<React.SetStateAction<string>>; 
 
 ```
 
-## Output
 
-<center>
-  <img width="100%" alt="Basic component output" src="https://raw.githubusercontent.com/supercoder123/react-otp-input-hook/main/images/basic-component.gif" />
-</center>
