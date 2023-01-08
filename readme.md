@@ -2,7 +2,7 @@
 <img width="300" src="https://raw.githubusercontent.com/supercoder123/react-otp-input-hook/main/images/lib-logo.svg" alt="React OTP Input Hook" /> 
 </div> 
 
-A simple react hook to create otp inputs with ease. Inspired by libraries like react-hook-form, 
+A simple react hook to create otp inputs with ease. Inspired by libraries like react-hook-form, downshift-js ...etc
 
 ## Features
 - No dependencies (only needs react as peer dependency)

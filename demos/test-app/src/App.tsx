@@ -137,6 +137,7 @@ export function OTPInputBasic() {
 
 const BasicOTPComponentLoop = ({ onChange }: { onChange: (val: string) => void }) => {
   const { inputs, setValue } = useOtpInput({
+    type: 'numeric',
     numberOfInputs: 5,
     onInputValueChange: onChange,
   });
