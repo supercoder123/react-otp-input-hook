@@ -1,4 +1,4 @@
-import { CSSProperties } from "react";
+import { ClipboardEvent, CSSProperties } from "react";
 export interface InputOptions {
     required?: boolean;
     maxLength?: number;
@@ -14,7 +14,6 @@ export interface InputSyncProps {
     defaultClassName?: string;
     autoCompleteAttribute?: string | undefined;
     cycle?: boolean;
-    perInputPattern?: (val: string) => boolean;
     placeholder?: string;
     numberOfInputs?: number;
 }
@@ -43,4 +42,17 @@ export type InputTypeMap = {
     'alphanumeric': 'text';
     'password': 'password';
     'password-numeric': 'password';
+};
+export type RegisterReturn<T> = {
+    autoComplete: string;
+    "aria-label": string;
+    name: string;
+    onKeyDown: (e: React.KeyboardEvent<T>) => void;
+    onInput: (e: React.FormEvent<T>) => void;
+    onKeyUp: (e: React.KeyboardEvent<T>) => void;
+    onFocus: (e: React.FocusEvent<T>) => void;
+    ref: (fieldRef: T) => void;
+    style: React.CSSProperties | undefined;
+    placeholder: string;
+    onPaste: (e: ClipboardEvent<T>) => void;
 };

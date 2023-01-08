@@ -1,32 +1,7 @@
-import React, { ClipboardEvent } from "react";
-import { InputFieldType, InputOptions, InputSyncOptions } from "../types";
-type RegisterReturn<T> = {
-    autoComplete: string;
-    "aria-label": string;
-    name: string;
-    onKeyDown: (e: React.KeyboardEvent<T>) => void;
-    onInput: (e: React.FormEvent<T>) => void;
-    onKeyUp: (e: React.KeyboardEvent<T>) => void;
-    onFocus: (e: React.FocusEvent<T>) => void;
-    ref: (fieldRef: T) => void;
-    style: React.CSSProperties | undefined;
-    placeholder: string;
-    onPaste: (e: ClipboardEvent<T>) => void;
-};
+import React from "react";
+import { InputFieldType, InputOptions, InputSyncOptions, RegisterReturn } from "../types";
 declare const useOtpInput: <T extends InputFieldType = HTMLInputElement>({ type, onInputValueChange, blankAllowed, focusOnLoad, autoCompleteAttribute, defaultInlineStyles, cycle, placeholder, numberOfInputs }?: InputSyncOptions) => {
-    register(name: string, options?: InputOptions): {
-        autoComplete: string;
-        "aria-label": string;
-        name: string;
-        onKeyDown: (e: React.KeyboardEvent<T>) => void;
-        onInput: (e: React.FormEvent<T>) => void;
-        onKeyUp: (e: React.KeyboardEvent<T>) => void;
-        onFocus: (e: React.FocusEvent<T, Element>) => void;
-        ref: (fieldRef: T) => void;
-        style: React.CSSProperties | undefined;
-        placeholder: string;
-        onPaste: (e: React.ClipboardEvent<T>) => void;
-    };
+    register(name: string, options?: InputOptions): RegisterReturn<T>;
     setValue: (val: string | number) => void;
     setDisabled: (disabled: boolean) => void;
     clear: () => void;

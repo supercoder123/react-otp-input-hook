@@ -11,7 +11,7 @@
   "dependencies": {
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-otp-input-hook": "file:../../react-otp-input-hook-1.0.5.tgz"
+    "react-otp-input-hook": "file:../../react-otp-input-hook-1.0.7-c.tgz"
   },
   "devDependencies": {
     "@types/react": "^18.0.26",
