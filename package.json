@@ -1,7 +1,7 @@
 {
   "name": "react-otp-input-hook",
   "source": "lib/index.ts",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "React hook to build OTP inputs",
   "types": "./dist/types/index.d.ts",
   "main": "./dist/index.js",
