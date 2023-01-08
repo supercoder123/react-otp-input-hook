@@ -1,32 +1,18 @@
-import React, { useEffect, useRef, useState, useCallback, useMemo, ClipboardEvent, Ref, RefObject, useLayoutEffect } from "react";
+import React, { useRef, useState, useCallback, ClipboardEvent, useLayoutEffect } from "react";
 import {
-    InputField,
     InputFieldType,
     InputOptions,
     InputSyncOptions,
     InputSyncState,
     InputTypeMap,
     KeyCodes,
+    RegisterReturn,
 } from "../types";
 
 const defaultRegisterOptions = {
     maxLength: 1,
     required: false,
 };
-
-type RegisterReturn<T> =  {
-    autoComplete: string;
-    "aria-label": string;
-    name: string;
-    onKeyDown: (e: React.KeyboardEvent<T>) => void;
-    onInput: (e: React.FormEvent<T>) => void;
-    onKeyUp: (e: React.KeyboardEvent<T>) => void;
-    onFocus: (e: React.FocusEvent<T>) => void;
-    ref: (fieldRef: T) => void;
-    style: React.CSSProperties | undefined;
-    placeholder: string;
-    onPaste: (e: ClipboardEvent<T>) => void;
-}
 
 /** non number or char keys */
 const SPECIAL_KEYS: string[] = [KeyCodes.ARROW_LEFT, KeyCodes.ARROW_RIGHT, KeyCodes.BACKSPACE, KeyCodes.SPACEBAR, KeyCodes.ENTER];
@@ -146,7 +132,7 @@ const useOtpInput = <T extends InputFieldType = HTMLInputElement>({
         register(
             name: string,
             options: InputOptions = defaultRegisterOptions
-        ) {
+        ): RegisterReturn<T> {
             const inputMaxLength = options.maxLength ? options.maxLength : 1;
             return {
                 autoComplete: autoCompleteAttribute,
@@ -232,7 +218,6 @@ const useOtpInput = <T extends InputFieldType = HTMLInputElement>({
                         }
                         mainRef.current.fields.push({
                             element: fieldRef,
-                            // isDirty: false,
                             inputName: name,
                             maxLength: inputMaxLength
                         });
@@ -243,8 +228,6 @@ const useOtpInput = <T extends InputFieldType = HTMLInputElement>({
                 onPaste: (e: ClipboardEvent<T>)=> {
                     const paste = e.clipboardData.getData("text");
                     fillInputValue(mainRef.current.currentActiveInputIndex, paste);
-                    const numberOfInputs = mainRef.current.fields.length;
-                    // mainRef.current.fields[Math.min(numberOfInputs, paste.length) - 1].element.focus();
                 }
             };
         },
@@ -266,7 +249,6 @@ const useOtpInput = <T extends InputFieldType = HTMLInputElement>({
             });
             setValueState("");
         },
-        // inputState: mainRef.current,
         value,
         /** experimental - may change in future */
         get inputs (): RegisterReturn<T>[] {

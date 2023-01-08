@@ -4,7 +4,7 @@ import { useEffect, useState, useMemo } from "react";
 
 import reactLogo from "./assets/react.svg";
 import "./App.css";
-import { useOtpInput } from "../../../lib";
+import { useOtpInput } from "react-otp-input-hook";
 
 const LoopInput = memo(({ inputs }) => {
   return inputs.map((inputProps, i) => {
@@ -47,6 +47,7 @@ export function OTPInputBasic() {
   const memInputs = useMemo(() => inputs, []);
   const registerOptions = {
     required: true,
+    maxLength: 3
   };
 
   return (
@@ -135,7 +136,7 @@ export function OTPInputBasic() {
 }
 
 const BasicOTPComponentLoop = ({ onChange }: { onChange: (val: string) => void }) => {
-  const { inputs } = useOtpInput({
+  const { inputs, setValue } = useOtpInput({
     numberOfInputs: 5,
     onInputValueChange: onChange,
   });
@@ -154,7 +155,7 @@ const BasicOTPComponent = ({ onChange }: { onChange: (val: string) => void }) =>
     onInputValueChange: onChange,
   });
 
-  const defaultOptions = { required: true };
+  const defaultOptions = { required: true, maxLength: 3 };
 
   return (
     <div style={{ padding: '10px 0' }}>
@@ -179,7 +180,7 @@ function App() {
         }}
       >
 
-        <BasicOTPComponent
+        <BasicOTPComponentLoop
           onChange={(value: string) => {
             console.log('value', value);
             setValue(value);

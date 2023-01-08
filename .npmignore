@@ -1,4 +1,5 @@
 demos
 node_modules
 __tests__
+*.tgz
 images
