@@ -135,9 +135,18 @@ button {
 
 ## Options
 ```
-// T can be HTMLTextAreaElement or HTMLInputElement;
-const { register, setValue, setDisabled, clear, value, inputs, error, setError } = useOtpInput<T>(options);
+const { 
+  register, 
+  setValue, 
+  setDisabled, 
+  clear, 
+  value, 
+  inputs, 
+  error, 
+  setError 
+} = useOtpInput<T>(options);
 
+// T can be HTMLTextAreaElement or HTMLInputElement;
 
 options = {
   type?: "numeric" | "alphanumeric" | "password" | "password-numeric";
@@ -192,7 +201,8 @@ clear: () => void;
 // provides the value of the otp input
 value: string | number; 
 
-// Returns the inputs based on the value provided in numberOfInputs. Can be used to set the inputs in a loop instead of registering it one byone
+// Returns the inputs based on the value provided in numberOfInputs. 
+// Can be used to set the inputs in a loop instead of registering it one by one
 readonly inputs: RegisterReturn<T>[]; 
 
 // get an error string
