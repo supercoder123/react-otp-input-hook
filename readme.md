@@ -1,6 +1,11 @@
 <div align="center">
-<img width="300" src="https://raw.githubusercontent.com/supercoder123/react-otp-input-hook/main/images/lib-logo.svg" alt="React OTP Input Hook" /> 
+  <img width="300" src="https://raw.githubusercontent.com/supercoder123/react-otp-input-hook/main/images/lib-logo.svg" alt="React OTP Input Hook" /> 
+
+  [![Coverage Status](https://coveralls.io/repos/github/supercoder123/react-otp-input-hook/badge.svg?branch=main)](https://coveralls.io/github/supercoder123/react-otp-input-hook?branch=main)
+  [![Build Status](https://app.travis-ci.com/supercoder123/react-otp-input-hook.svg?branch=main)](https://app.travis-ci.com/supercoder123/react-otp-input-hook)
 </div> 
+
+
 
 A simple react hook to create otp inputs with ease. Inspired by libraries like react-hook-form, downshift-js ...etc
 
