@@ -24,6 +24,13 @@ A simple react hook to create otp inputs with ease. Inspired by libraries like r
 - Written in typescript
 - Lots of options
 - Works with many libraries
+  
+
+<br>
+
+#### Docs: https://supercoder123.github.io/react-otp-input-docs/  
+<br>
+
 
 ## Installation
 ```
@@ -95,6 +102,3 @@ function App() {
 </center>
 
 
-#### Docs: https://supercoder123.github.io/react-otp-input-docs/  
-
-<br>
