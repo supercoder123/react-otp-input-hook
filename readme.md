@@ -30,6 +30,66 @@ A simple react hook to create otp inputs with ease. Inspired by libraries like r
 npm i react-otp-input-hook
 ```
 
+
+
+## Usage
+
+```
+import { useOtpInput } from "react-otp-input-hook";
+
+const BasicOTPComponent = ({ onChange }: { onChange: (val: string) => void }) => {
+  const { register } = useOtpInput({
+    onInputValueChange: onChange,
+  });
+
+  const defaultOptions = { required: true };
+
+  return (
+    <div style={{ padding: '10px' }}>
+      <input {...register("digit-1", defaultOptions)} />
+      <input {...register("digit-2", defaultOptions)} />
+      <input {...register("digit-3", defaultOptions)} />
+      <input {...register("digit-4", defaultOptions)} />
+      <input {...register("digit-5", defaultOptions)} />
+    </div>
+  );
+};
+```
+
+## Use Inside any form
+```
+function App() {
+  const [value, setValue] = useState("");
+
+  return (
+    <div>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          console.log('Value', value);
+        }}
+      >
+
+        <BasicOTPComponent
+          onChange={(value: any) => {
+            console.log(value);
+            setValue(value);
+          }}
+        />
+
+        <button
+          type="submit"
+        >
+          Submit
+        </button>
+      </form>
+
+      <div>{value}</div>
+    </div>
+  );
+}
+```
+
 <center>
   <img width="100%" alt="Basic component output" src="https://raw.githubusercontent.com/supercoder123/react-otp-input-hook/main/images/basic-component.gif" />
 </center>
