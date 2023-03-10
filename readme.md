@@ -10,7 +10,7 @@
 
 </div> 
 
-
+# React Otp Input Hook
 
 A simple react hook to create otp inputs with ease. Inspired by libraries like react-hook-form, downshift-js ...etc
 
